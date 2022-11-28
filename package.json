@@ -1,17 +1,19 @@
 {
-    "name": "com.oops.uject",
-    "displayName": "UJect",
-    "description": "Simple Unity Dependency Injection Library",
-    "documentationUrl": "https://github.com/oopsitsacoder/UJect",
-    "version": "0.0.1",
-    "unity": "2019.2",
-    "author": {
-        "name": "OopsItsACoder",
-        "url": "https://github.com/oopsitsacoder"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/oopsitsacoder/UJect.git"
-    },
-    "testables": ["UJect.Tests"]
+  "name": "com.oops.uject",
+  "displayName": "UJect",
+  "description": "Simple Unity Dependency Injection Library",
+  "documentationUrl": "https://github.com/oopsitsacoder/UJect",
+  "version": "0.1.0",
+  "unity": "2019.2",
+  "author": {
+    "name": "OopsItsACoder",
+    "url": "https://github.com/oopsitsacoder"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oopsitsacoder/UJect.git"
+  },
+  "testables": [
+    "UJect.Tests"
+  ]
 }
