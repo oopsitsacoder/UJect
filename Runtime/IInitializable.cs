@@ -1,4 +1,5 @@
-﻿using UJect.Utilities;
+// Copyright (c) 2024 OopsItsACoder
+using UJect.Utilities;
 
 namespace UJect
 {

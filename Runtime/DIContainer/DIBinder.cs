@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 OopsItsACoder
+// Copyright (c) 2024 OopsItsACoder
 
 namespace UJect
 {

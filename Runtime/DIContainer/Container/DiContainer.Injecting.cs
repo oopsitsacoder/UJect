@@ -1,4 +1,5 @@
-﻿using System;
+// Copyright (c) 2024 OopsItsACoder
+using System;
 
 using UJect.Assertions;
 using UJect.Injection;
