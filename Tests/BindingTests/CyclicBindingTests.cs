@@ -1,4 +1,4 @@
-﻿using System;
+// Copyright (c) 2024 OopsItsACoder
 using NUnit.Framework;
 using UJect.Exceptions;
 using UJect.Injection;

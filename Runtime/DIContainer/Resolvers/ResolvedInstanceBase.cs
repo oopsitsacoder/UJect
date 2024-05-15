@@ -1,4 +1,5 @@
-﻿namespace UJect
+// Copyright (c) 2024 OopsItsACoder
+namespace UJect
 {
     public abstract class ResolvedInstanceBase<TImpl> : IResolvedInstance<TImpl>
     {

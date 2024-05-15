@@ -1,4 +1,5 @@
-﻿namespace UJect.Utilities
+// Copyright (c) 2024 OopsItsACoder
+namespace UJect.Utilities
 {
     internal static class LifetimeCheck
     {

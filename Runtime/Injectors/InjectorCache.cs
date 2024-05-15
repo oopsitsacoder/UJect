@@ -1,11 +1,12 @@
-﻿using System;
+// Copyright (c) 2024 OopsItsACoder
+using System;
 using System.Collections.Generic;
 
 namespace UJect.Injection
 {
     internal static class InjectorCache
     {
-        private static readonly Dictionary<Type, Injector> injectorCache = new Dictionary<Type, Injector>();
+        private static readonly Dictionary<Type, Injector> injectorCache = new();
 
         internal static int CachedInjectorCount => injectorCache.Count;
         

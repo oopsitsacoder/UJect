@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2022 OopsItsACoder
+// Copyright (c) 2024 OopsItsACoder
 
 using System;
 using NUnit.Framework;

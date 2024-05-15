@@ -1,4 +1,5 @@
-﻿namespace UJect.Resolvers
+// Copyright (c) 2024 OopsItsACoder
+namespace UJect.Resolvers
 {
     /// <summary>
     /// Simple abstract class to extend for custom resolver classes.

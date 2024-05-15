@@ -1,4 +1,6 @@
-﻿using System;
+// Copyright (c) 2024 OopsItsACoder
+
+using System;
 using UJect.Factories;
 using UJect.Resolvers;
 using UJect.Utilities;

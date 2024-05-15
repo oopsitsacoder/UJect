@@ -1,4 +1,5 @@
-﻿using UJect.Assertions;
+// Copyright (c) 2024 OopsItsACoder
+using UJect.Assertions;
 using UJect.Exceptions;
 using UJect.Factories;
 using UJect.Resolvers;

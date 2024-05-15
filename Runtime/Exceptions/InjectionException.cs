@@ -1,4 +1,4 @@
-﻿// Copyright (c) YEAR CP
+// Copyright (c) 2024 OopsItsACoder
 
 using System;
 

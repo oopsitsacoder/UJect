@@ -1,7 +1,7 @@
-﻿using System.Linq;
+// Copyright (c) 2024 OopsItsACoder
+using System.Linq;
 using NUnit.Framework;
 using UJect.Injection;
-using UnityEngine;
 
 namespace UJect.Tests
 {

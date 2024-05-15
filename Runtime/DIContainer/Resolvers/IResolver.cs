@@ -1,4 +1,5 @@
-﻿namespace UJect.Resolvers
+// Copyright (c) 2024 OopsItsACoder
+namespace UJect.Resolvers
 {
     /// <summary>
     /// IResolvers must be able to resolve a single instance of a dependency.
