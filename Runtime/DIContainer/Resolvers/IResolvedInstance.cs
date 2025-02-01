@@ -8,7 +8,7 @@ namespace UJect
         bool   IsDestroyed    { get; }
     }
     
-    public interface IResolvedInstance<TImpl> : IResolvedInstance
+    public interface IResolvedInstance<out TImpl> : IResolvedInstance
     {
         TImpl InstanceObjectTyped { get; }
     }

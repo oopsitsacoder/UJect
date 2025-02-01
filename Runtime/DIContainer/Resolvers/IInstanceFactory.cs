@@ -2,7 +2,7 @@
 
 namespace UJect.Factories
 {
-    public interface IInstanceFactory<TImpl>
+    public interface IInstanceFactory<out TImpl>
     {
         TImpl CreateInstance();
     }
