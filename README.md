@@ -100,6 +100,8 @@ They can be retrieved in a similar manner:
 
 ## Injection
 Because calling `Get<TInterface>()` everywhere is annoying, UJect comes with an `[Inject]` attribute, which can be used to automatically inject dependencies into other classes via reflection.
+
+### Field injection
 ```
 public class SampleClass
 {
@@ -126,3 +128,16 @@ public class SampleClass
 }
 ```
 In this example, `impl2` will be automatically injected into the `Impl` instance when `IInterface` is resolved.
+
+### Constructor injection
+```
+
+    private class Impl : IInterface 
+    {
+        private readonly IInterface2 impl2;
+
+        // Constructor parameter will be automatically filled in
+        public Impl([Inject] IInterface2 impl2) => this.impl2 = impl2;
+    }
+}
+```
