@@ -68,9 +68,14 @@ More than one interface can be bound to the same instance:
 ```
         class Impl : IInterface1, IInterface2 { ... }
 
-        //Bind IInterface1 and IInterface2 to an new instance of Impl
+        //Bind IInterface1 and IInterface2 to the same new instance of Impl
         var impl = new Impl();
         container.Bind<IInterface1, IInterface2>().ToNewInstance<Impl>();
+
+        var interface1 = container.Get<IInterface1>();
+        var interface2 = container.Get<IInterface2>();
+        var isSameInstance = object.ReferenceEquals(interface1, interface2); // Is true
+
 ```
 
 ### Unbinding
