@@ -102,6 +102,7 @@ They can be retrieved in a similar manner:
 Because calling `Get<TInterface>()` everywhere is annoying, UJect comes with an `[Inject]` attribute, which can be used to automatically inject dependencies into other classes via reflection.
 
 ### Field injection
+You can mark fields to be injected automatically.
 ```
 public class SampleClass
 {
@@ -130,8 +131,8 @@ public class SampleClass
 In this example, `impl2` will be automatically injected into the `Impl` instance when `IInterface` is resolved.
 
 ### Constructor injection
+You can also mark constructor parameters as injectable, and UJect will attempt to fill them in (or throw an exception if it cannot).
 ```
-
     private class Impl : IInterface 
     {
         private readonly IInterface2 impl2;
@@ -139,5 +140,7 @@ In this example, `impl2` will be automatically injected into the `Impl` instance
         // Constructor parameter will be automatically filled in
         public Impl([Inject] IInterface2 impl2) => this.impl2 = impl2;
     }
-}
 ```
+
+### Note:
+If Unity's code stripping feature is turned on, it's possible that injected fields and constructors will be stripped, as they're only referenced via reflection. If you have code stripping turned on, you'll have to mark your injected memebers with `[Preserve]`
