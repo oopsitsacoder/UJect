@@ -63,6 +63,16 @@ UJect provides a simple binding interface for a few different use cases:
         container.Bind<IInterface>().ToResource("MyResources/ImplAsset");
 ```
 
+### Multi-Bindings
+More than one interface can be bound to the same instance:
+```
+        class Impl : IInterface1, IInterface2 { ... }
+
+        //Bind IInterface1 and IInterface2 to an new instance of Impl
+        var impl = new Impl();
+        container.Bind<IInterface1, IInterface2>().ToNewInstance<Impl>();
+```
+
 ### Unbinding
 You can unbind by calling
 ```
