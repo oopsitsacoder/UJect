@@ -2,6 +2,8 @@
 
 Uject is an attempt at a simplified dependency injection framework for Unity3d Games.
 
+## Installation
+Open the Unity package manager, choose "Install package from git URL", and input `https://github.com/oopsitsacoder/UJect.git`
 
 ## How to use
 
