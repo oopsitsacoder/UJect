@@ -1,4 +1,4 @@
-// Copyright (c) 2024 OopsItsACoder
+// Copyright (c) 2026 OopsItsACoder
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace UJect
         private readonly Dictionary<IResolver, InjectionKey[]> allKeyLookup = new();
         private readonly DependencyTree dependencyTree = new();
         private readonly DiContainer parentContainer;
-        private readonly string                                      containerName;
+        private readonly string containerName;
 
         private DiPhase phase;
         private bool    isDisposed;

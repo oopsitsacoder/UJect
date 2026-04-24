@@ -1,10 +1,10 @@
-// Copyright (c) 2024 OopsItsACoder
+// Copyright (c) 2026 OopsItsACoder
 
 using System;
 
 namespace UJect.Exceptions
 {
-    public class CyclicDependencyException : InvalidOperationException
+    public class CyclicDependencyException : BindException
     {
         internal CyclicDependencyException(string message): base(message)
         {

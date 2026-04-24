@@ -1,4 +1,4 @@
-// Copyright (c) 2024 OopsItsACoder
+// Copyright (c) 2026 OopsItsACoder
 using System;
 using System.Collections.Generic;
 

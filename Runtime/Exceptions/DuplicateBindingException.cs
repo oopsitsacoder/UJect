@@ -1,11 +1,11 @@
-// Copyright (c) 2024 OopsItsACoder
+// Copyright (c) 2026 OopsItsACoder
 
 using System;
 using System.Linq;
 
 namespace UJect.Exceptions
 {
-    public class DuplicateBindingException : ArgumentException
+    public class DuplicateBindingException : BindException
     {
         internal DuplicateBindingException(InjectionKey injectionKey) : base($"Dependency already bound for type \"{injectionKey.InjectedResourceType}\" with custom ID: \"{injectionKey.InjectedResourceName}\"")
         {
