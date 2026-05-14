@@ -93,7 +93,7 @@ namespace UJect
         /// <typeparam name="TImpl"></typeparam>
         /// <returns>The original container</returns>
         [LibraryEntryPoint]
-        public DiContainer ToFactory<TImpl>(IInstanceFactory<TImpl> factoryImpl) where TImpl :  TInterface1
+        public DiContainer  ToFactory<TImpl>(IInstanceFactory<TImpl> factoryImpl) where TImpl :  TInterface1
         {
                         dependencies.InstallFactoryBinding<TInterface1, TImpl>(customId, factoryImpl);
             return dependencies;

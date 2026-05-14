@@ -1,0 +1,190 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" #>
+<#@ import namespace="System.Linq" #>
+<#@ output extension="g.cs"#>
+// Copyright (c) <#=DateTime.Now.ToString("yyyy")#> OopsItsACoder
+
+using System;
+using UJect.Factories;
+using UJect.Resolvers;
+using UJect.Utilities;
+
+namespace UJect.UnityExtensions
+{
+<#
+    for (int i = 1; i <= 5; i++)
+    {
+        GenerateBinder(i);
+    }
+    
+    void GenerateBinder(int numInterfaces)
+    {
+        var interfaceNames = Enumerable.Range(0, numInterfaces).Select(i => $"TInterface{i + 1}").ToList();
+        var joinedInterfaces = string.Join(", ", interfaceNames);
+
+        var interfaceType = $"IUnityDiBinder<{joinedInterfaces}>";
+
+#>
+
+    public class UnityDiBinder<<#=joinedInterfaces#>> : <#=interfaceType#>
+    {
+        private readonly DiContainer diContainer;
+
+        private string customId;
+
+        public UnityDiBinder(DiContainer diContainer)
+        {
+            this.diContainer = diContainer;
+        }
+
+        /// <summary>
+        /// Bind the type resource with the custom ID provided. This allows disambiguating multiple resources of the same type
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>The same binder</returns>
+        [LibraryEntryPoint]
+        public <#=interfaceType#> WithId(string id)
+        {
+            customId = id;
+            return this;
+        }
+
+        /// <summary>
+        /// Bind the given type to a provided concrete implementation stored in Resources.
+        /// </summary>
+        /// <typeparam name="TImpl">The implementation concrete type</typeparam>
+        /// <returns>The original container</returns>
+        [LibraryEntryPoint]
+        public DiContainer ToResource<TImpl>(string resourcePath) where TImpl : UnityEngine.Object, <#=joinedInterfaces#>
+        {
+            var resolver = new UnityExtensions.Resolvers.ResourceInstanceResolver<TImpl>(resourcePath);
+            return ToCustomResolver<TImpl>(resolver);
+        }
+
+        /// <summary>
+        /// Bind the given type to a provided concrete implementation instance of that type.
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <typeparam name="TImpl"></typeparam>
+        /// <returns>The original container</returns>
+        [LibraryEntryPoint]
+        public DiContainer ToInstance<TImpl>(TImpl instance) where TImpl : UnityEngine.Object, <#=joinedInterfaces#>
+        {
+            var resolver = new UnityExtensions.Resolvers.InstanceResolver<TImpl>(instance);
+            InstallBindings<TImpl>(resolver);
+            return diContainer;
+        }
+
+        /// <summary>
+        /// Bind the given type to a new instance of the provided concrete implementation of that type.
+        /// </summary>
+        /// <typeparam name="TImpl"></typeparam>
+        /// <returns>The original container</returns>
+        [LibraryEntryPoint]
+        public DiContainer ToNewPrefabInstance<TImpl>(TImpl prefab) where TImpl : UnityEngine.Component, <#=joinedInterfaces#>
+        {
+            var resolver = new UnityExtensions.Resolvers.NewPrefabInstanceResolver<TImpl>(diContainer, prefab);
+            InstallBindings<TImpl>(resolver);
+            return diContainer;
+        }
+
+        /// <summary>
+        /// Bind the given type to a function that will provide a concrete instance of that type
+        /// </summary>
+        /// <param name="factoryMethod"></param>
+        /// <returns>The original container</returns>
+        [LibraryEntryPoint]
+        public DiContainer ToFactoryMethod<TImpl>(Func<TImpl> factoryMethod) where TImpl : UnityEngine.Object, <#=joinedInterfaces#>
+        {
+            var resolver = new UnityExtensions.Resolvers.FunctionInstanceResolver<TImpl>(factoryMethod);
+            InstallBindings<TImpl>(resolver);
+            return diContainer;
+        }
+
+        /// <summary>
+        /// Bind the given type to a custom resolver.
+        /// </summary>
+        /// <param name="customResolver"></param>
+        /// <typeparam name="TImpl"></typeparam>
+        /// <returns>The original container</returns>
+        [LibraryEntryPoint]
+        public DiContainer ToCustomResolver<TImpl>(IResolver customResolver) where TImpl : UnityEngine.Object, <#=joinedInterfaces#>
+        {
+            InstallBindings<TImpl>(customResolver);
+            return diContainer;
+        }
+
+        /// <summary>
+        /// Bind the given type to a factory implementation that will provide a concrete instance of that type.
+        /// Factories can be injected into before resolution, making them useful when you want to use a bunch of injected resources to
+        /// create the instance.
+        /// </summary>
+        /// <param name="factoryImpl"></param>
+        /// <typeparam name="TImpl"></typeparam>
+        /// <returns>The original container</returns>
+        [LibraryEntryPoint]
+        public DiContainer ToFactory<TImpl>(IInstanceFactory<TImpl> factoryImpl) where TImpl : UnityEngine.Object, <#=joinedInterfaces#>
+        {
+<#
+        if (interfaceNames.Count > 1)
+        {
+#>
+            diContainer.InstallFactoryMultiBind(
+                customId,
+                factoryImpl,
+<#
+            for (var i = 0; i < interfaceNames.Count; i++)
+            {
+                var interfaceName = interfaceNames[i];
+                #>
+                InjectionKey.Of<<#=interfaceName#>>(customId)<#=(i<interfaceNames.Count-1 ? "," : "")#>
+<#
+            }
+#>
+            );
+<#
+        }
+        else
+        {
+#>
+                        diContainer.InstallFactoryBinding<<#=joinedInterfaces#>, TImpl>(customId, factoryImpl);
+<#
+        }
+#>
+            return diContainer;
+        }
+
+        private void InstallBindings<TImpl>(IResolver resolver) where TImpl :  <#=joinedInterfaces#>
+        {
+<#
+        if (interfaceNames.Count > 1)
+        {
+#>
+            diContainer.InstallMultiBinding(
+                InjectionKey.Of<TImpl>(),
+                resolver,
+<#
+            for (var i = 0; i < interfaceNames.Count; i++)
+            {
+                var interfaceName = interfaceNames[i];
+                #>
+                InjectionKey.Of<<#=interfaceName#>>(customId)<#=(i<interfaceNames.Count-1 ? "," : "")#>
+<#
+            }
+#>
+            );
+<#
+        }
+        else
+        {
+#>
+            diContainer.InstallBinding<<#=joinedInterfaces#>, TImpl>(customId, resolver);
+<#
+        }
+#>
+        }
+    }
+<#
+    }
+#>
+}
