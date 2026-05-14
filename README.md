@@ -31,6 +31,13 @@ public class SampleClass
 
 ```
 
+## [DiContainer](docs/DiContainer.md)
+### What is it?
+`DiContainer` is a scoped container holding on to a bunch of bound implementations.
+You can use it as either a Service Locator, or use more advanced injection techniques.
+
+
+
 ## Binding
 
 ### Basic Bindings
