@@ -7,10 +7,15 @@ using UJect.Exceptions;
 
 namespace UJect.Injection
 {
+    /// <summary>
+    /// Cached reflection and dependency information for a specific type
+    /// </summary>
     internal class Injector
     {
-        private static readonly Type         injectAttributeType      = typeof(InjectAttribute);
-        private const           BindingFlags INJECTABLE_BINDING_FLAGS = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+        private static readonly Type injectAttributeType = typeof(InjectAttribute);
+
+        private const BindingFlags INJECTABLE_BINDING_FLAGS
+            = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
         private readonly HashSet<InjectionKey>       dependsOn              = new();
         private readonly List<InjectableConstructor> injectableConstructors = new();
@@ -35,6 +40,8 @@ namespace UJect.Injection
         private void FetchFields()
         {
             injectableFields.Clear();
+            
+            // Grab all fields with proper binding flags and an inject attribute
             var fields = referencedType.GetFields(INJECTABLE_BINDING_FLAGS)
                 .Where(fi => fi.IsDefined(injectAttributeType, true));
 
@@ -42,7 +49,11 @@ namespace UJect.Injection
             {
                 var customId = fieldInfo.GetCustomAttribute<InjectAttribute>(true).CustomId;
                 var fieldInjectionKey = new InjectionKey(fieldInfo.FieldType, customId);
+                
+                // mark the dependency for later use in the dependency tree
                 dependsOn.Add(fieldInjectionKey);
+                
+                // Add the field
                 injectableFields.Add(new InjectableField(fieldInfo, fieldInjectionKey));
             }
         }
@@ -68,11 +79,11 @@ namespace UJect.Injection
                     }
 
                     var injectableConstructor = new InjectableConstructor(constructorInfo, argsKeys);
-
                     injectableConstructors.Add(injectableConstructor);
                 }
             }
 
+            // Sort constructors by most params to least, so we always fill out as much data as possible
             injectableConstructors.Sort((c1, c2) => c2.ParamKeys.Length.CompareTo(c1.ParamKeys.Length));
         }
 

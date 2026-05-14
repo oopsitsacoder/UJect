@@ -20,8 +20,8 @@ namespace UJect.Tests.InjectionTests
             
             container.TryResolveAll();
             
-            Assert.IsNotNull(instance.Injectable);
-            Assert.AreEqual("A", instance.Injectable.Name);
+            Assert.IsNotNull(instance.Injectable, "instance.Injectable != null");
+            Assert.AreEqual("A", instance.Injectable.Name, "instance.Injectable should have matching name!");
         }
         
         private abstract class ProtectedBaseClass

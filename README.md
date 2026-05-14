@@ -31,80 +31,18 @@ public class SampleClass
 
 ```
 
-## [DiContainer](docs/DiContainer.md)
-### What is it?
+## [DiContainer](~docs/DiContainer.md)
 `DiContainer` is a scoped container holding on to a bunch of bound implementations.
 You can use it as either a Service Locator, or use more advanced injection techniques.
 
+## [Binding](~docs/Binding.md)
+Binding is how you define dependencies and how resources are resolved.
 
-
-## Binding
-
-### Basic Bindings
-UJect provides a simple binding interface for a few different use cases:
-
-1. Bind to existing instance
+### Quick Start
 ```
-        //Bind IInterface to an existing instance of impl
-        var impl = new Impl();
-        container.Bind<IInterface>().ToInstance(impl);
-```
-2. Bind to a new instance
-```
-        //Bind IInterface to a new instance of impl
-        container.Bind<IInterface>().ToNewInstance<Impl>();
-```
-3. Bind to factory
-```
-        //Bind IInterface to a new instance, which will be created by the factory at resolution time
-        IInstanceFactory<Impl> myFactory = ...;
-        container.Bind<IInterface>().ToFactory(myFactory);
-```
-4. Bind to factory method
-```
-        //Bind IInterface to a new instance, which will be created by the factory method at resolution time
-        Func<Impl> myFactoryFunc = ...;
-        container.Bind<IInterface>().ToFactoryMethod(myFactoryFunc);
-```
-5. [Experimental] Bind to a Resource
-```
-        //Bind IInterface to a Unity resource (from a Resources folder)
-        container.Bind<IInterface>().ToResource("MyResources/ImplAsset");
-```
-
-### Multi-Bindings
-More than one interface can be bound to the same instance:
-```
-        class Impl : IInterface1, IInterface2 { ... }
-
-        //Bind IInterface1 and IInterface2 to the same new instance of Impl
-        var impl = new Impl();
-        container.Bind<IInterface1, IInterface2>().ToNewInstance<Impl>();
-
-        var interface1 = container.Get<IInterface1>();
-        var interface2 = container.Get<IInterface2>();
-        var isSameInstance = object.ReferenceEquals(interface1, interface2); // Is true
-
-```
-
-### Unbinding
-You can unbind by calling
-```
-        container.Unbind<IInterface>();
-```
-
-### Custom IDs
-Sometimes, you want to bind multiple instances of the same interface. In that case, you can give bind each with a custom `string` id:
-```
-        var impl1 = new Impl();
-        var impl2 = new Impl();
-        container.Bind<IInterface>().WithId("InstanceA").ToInstance(impl1);
-        container.Bind<IInterface>().WithId("InstanceB").ToInstance(impl2);
-```
-They can be retrieved in a similar manner:
-```
-        var dependency1 = container.Get<IInterface>("InstanceA");
-        var dependency2 = container.Get<IInterface>("InstanceB");
+//Bind IInterface to an existing instance of impl
+var impl = new Impl();
+container.Bind<IInterface>().ToInstance(impl);
 ```
 
 ## Injection
