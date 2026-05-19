@@ -7,13 +7,13 @@ using UJect.Injection;
 
 namespace UJect
 {
-    internal class DependencyTree
+    internal class DependencyTree : IDependencyTree
     {
         private readonly Dictionary<InjectionKey, DependencyNode> nodeLookup = new();
         private readonly HashSet<DependencyNode>                  roots      = new();
         private IEnumerable<DependencyNode> OrderedRoots => roots.OrderBy(n => n.InjectionKey);
 
-        internal IEnumerable<InjectionKey> RootKeys => OrderedRoots.Select(dn=>dn.InjectionKey);
+        public IEnumerable<InjectionKey> RootKeys => OrderedRoots.Select(dn=>dn.InjectionKey);
 
         private List<InjectionKey> cachedSortedList;
 
@@ -118,7 +118,7 @@ namespace UJect
             return false;
         }
 
-        internal IEnumerable<InjectionKey> Sorted()
+        public IEnumerable<InjectionKey> Sorted()
         {
             if (cachedSortedList == null)
             {
@@ -172,7 +172,7 @@ namespace UJect
             return sortedList;
         }
 
-        internal IEnumerable<InjectionKey> GetDependenciesFor(InjectionKey key)
+        public IEnumerable<InjectionKey> DependsOn(InjectionKey key)
         {
             return GetOrCreateNode(key).DependsOn.Select(d => d.InjectionKey);
         }

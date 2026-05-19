@@ -4,14 +4,14 @@ using System;
 
 namespace UJect
 {
-    internal struct InjectionKey : IComparable<InjectionKey>
+    public struct InjectionKey : IComparable<InjectionKey>, IEquatable<InjectionKey>
     {
         public readonly Type   InjectedResourceType;
-        public readonly string InjectedResourceName;
+        public readonly string? InjectedResourceName;
 
-        public static InjectionKey Of<T>(string customId = null) => new InjectionKey(typeof(T), customId);
+        public static InjectionKey Of<T>(string? customId = null) => new InjectionKey(typeof(T), customId);
 
-        public InjectionKey(Type injectedResourceType, string injectedResourceName = null)
+        public InjectionKey(Type injectedResourceType, string? injectedResourceName = null)
         {
             InjectedResourceType      = injectedResourceType;
             this.InjectedResourceName = injectedResourceName;
@@ -43,10 +43,7 @@ namespace UJect
         public int CompareTo(InjectionKey other)
         {
             var fullNameCompare = string.Compare(InjectedResourceType.FullName, other.InjectedResourceType.FullName, StringComparison.Ordinal);
-            if (fullNameCompare != 0)
-            {
-                return fullNameCompare;
-            }
+            if (fullNameCompare != 0) return fullNameCompare;
             return string.Compare(InjectedResourceName, other.InjectedResourceName, StringComparison.Ordinal);
         }
     }

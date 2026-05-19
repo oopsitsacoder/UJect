@@ -16,6 +16,9 @@ namespace UJect
         private readonly Dictionary<InjectionKey, IResolver> dependencyResolvers = new();
         private readonly Dictionary<IResolver, InjectionKey[]> allKeyLookup = new();
         private readonly DependencyTree dependencyTree = new();
+
+        public IDependencyTree DependencyTree => dependencyTree;
+        
         private readonly DiContainer parentContainer;
         private readonly string containerName;
 
