@@ -89,6 +89,8 @@ namespace UJect.Injection
 
         public void InjectFields(object obj, DiContainer diContainer)
         {
+            if (obj == null) throw new ArgumentNullException(nameof(obj), "Cannot inject into null object");
+            
             foreach (var injectableField in injectableFields)
             {
                 if (diContainer.TryGetDependencyInternal<object>(injectableField.InjectionKey, out var dependency))
@@ -97,7 +99,7 @@ namespace UJect.Injection
                 }
                 else
                 {
-                    throw new InvalidOperationException($"No dependency found for injected field {injectableField.FieldInfo.Name} with key {injectableField.InjectionKey} in {obj}");
+                    throw new InjectionException(obj.GetType(), $"No dependency found for injected field {injectableField.FieldInfo.Name} with key {injectableField.InjectionKey} in {obj}");
                 }
             }
         }
