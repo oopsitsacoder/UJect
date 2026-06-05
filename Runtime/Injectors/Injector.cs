@@ -121,7 +121,7 @@ namespace UJect.Injection
                 }
                 else
                 {
-                    throw new InvalidOperationException("Missing dependency for object constructor");
+                    throw new InjectionException(newInstanceType, $"Missing dependency for object constructor - parameter {paramIndex} of type {argKey.InjectedResourceType}");
                 }
             }
 
