@@ -18,7 +18,7 @@ namespace UJect
         [LibraryEntryPoint]
         public TInterface Get<TInterface>(string customId = null) where TInterface : class
         {
-            RuntimeAssert.AssertIsFalse(isDisposed, "You should not try to retrieve bindings from a disposed container!");
+            RuntimeAssert.AssertIsFalse(IsDisposed, "You should not try to retrieve bindings from a disposed container!");
 
             var key = new InjectionKey(typeof(TInterface), customId);
             if (TryGetDependencyInternal<TInterface>(key, out var dependency))
@@ -56,7 +56,7 @@ namespace UJect
 
         internal bool TryGetDependencyInternal<TType>(InjectionKey key, out TType dependency)
         {
-            RuntimeAssert.AssertIsFalse(isDisposed, "You should not try to retrieve bindings from a disposed container!");
+            RuntimeAssert.AssertIsFalse(IsDisposed, "You should not try to retrieve bindings from a disposed container!");
             TryResolveAll();
 
             if (TryGetDependencyResolvedInstance<TType>(key, out var dependencyInstance))
@@ -79,7 +79,7 @@ namespace UJect
         /// <returns></returns>
         private bool TryGetDependencyResolvedInstance<TType>(InjectionKey key, out IResolvedInstance dependency)
         {
-            RuntimeAssert.AssertIsFalse(isDisposed, "You should not try to retrieve bindings from a disposed container!");
+            RuntimeAssert.AssertIsFalse(IsDisposed, "You should not try to retrieve bindings from a disposed container!");
             TryResolveAll();
 
             if (resolvedInstances.TryGetValue(key, out var resolvedDependency))

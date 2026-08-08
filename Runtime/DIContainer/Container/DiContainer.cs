@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading;
 using UJect.Exceptions;
 using UJect.Resolvers;
 using UJect.Utilities;
@@ -19,17 +19,27 @@ namespace UJect
 
         public IDependencyTree DependencyTree => dependencyTree;
         
-        private readonly DiContainer parentContainer;
+        private readonly DiContainer? parentContainer;
         private readonly string containerName;
+        private readonly CancellationTokenSource cancellationTokenSource = new();
 
         private DiPhase phase;
-        private bool    isDisposed;
+        
+        /// <summary>
+        /// Returns true if Dispose has already been called on this <see cref="DiContainer"/>
+        /// </summary>
+        public bool IsDisposed { get; private set; }
 
         private DiPhase Phase
         {
             get => phase;
             set => phase = value;
         }
+        
+        /// <summary>
+        /// Cancellation Token that shares a lifetime with this DiContainer
+        /// </summary>
+        public CancellationToken CancellationToken => cancellationTokenSource.Token;
 
         /// <summary>
         /// Name of DiContainer.
@@ -52,22 +62,30 @@ namespace UJect
         /// </summary>
         /// <param name="parentContainer"></param>
         /// <param name="containerName"></param>
-        internal DiContainer(DiContainer parentContainer = null, string containerName = null)
+        internal DiContainer(DiContainer? parentContainer = null, string? containerName = null)
         {
             this.parentContainer = parentContainer;
-            this.containerName   = containerName;
+            this.containerName   = containerName ?? string.Empty;
             Phase                = DiPhase.Bind;
+            
+            // Bind this container to itself
             BindInstance(this);
+            
+            // And bind the CancellationToken for this container to itself
+            BindInstance(CancellationToken);
         }
 
         public void Dispose()
         {
-            if (isDisposed)
+            if (IsDisposed)
             {
                 return;
             }
-
-            isDisposed = true;
+            IsDisposed = true;
+            
+            cancellationTokenSource.Cancel();
+            cancellationTokenSource.Dispose();
+            
             foreach (var resolvedInstance in resolvedInstances.Values)
             {
                 if (!LifetimeCheck.IsNullOrDestroyed(resolvedInstance) && (resolvedInstance.InstanceObject is IDisposable disposable))
@@ -94,7 +112,7 @@ namespace UJect
         /// <param name="childContainerName"></param>
         /// <returns></returns>
         [LibraryEntryPoint]
-        public DiContainer CreateChildContainer(string childContainerName = null)
+        public DiContainer CreateChildContainer(string? childContainerName = null)
         {
             return new DiContainer(this, childContainerName);
         }
