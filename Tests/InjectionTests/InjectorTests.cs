@@ -1,4 +1,6 @@
 // Copyright (c) 2026 OopsItsACoder
+
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using UJect.Injection;
@@ -74,6 +76,89 @@ namespace UJect.Tests.InjectionTests
             //Clear should reset to zero
             InjectorCache.ClearCache();
             Assert.AreEqual(0, InjectorCache.CachedInjectorCount);
+        }
+
+        [Test]
+        public void TestFieldsOnBaseClasses()
+        {
+            InjectorCache.ClearCache();
+            
+            //Should reuse the first instance of an injector
+            var instance = InjectorCache.GetOrCreateInjector(typeof(ChildClass));
+            Assert.IsNotNull(instance, "Injector instance should not be null");
+            Assert.AreEqual(3, InjectorCache.CachedInjectorCount);
+            Assert.That(instance.InjectableFields.Count, Is.EqualTo(3));
+            var expectedDependsOn = new HashSet<InjectionKey>()
+            {
+                new InjectionKey(typeof(IInterface1)),
+                new InjectionKey(typeof(IInterface2)),
+                new InjectionKey(typeof(IInterface3)),
+            };
+            Assert.That(instance.DependsOn, Is.EquivalentTo(expectedDependsOn));
+            
+            Assert.That(InjectorCache.TryGetInjector(typeof(BaseClass1WithInjectableFields), out _), Is.True);
+            Assert.That(InjectorCache.TryGetInjector(typeof(BaseClass2WithNoInjectableFields), out _), Is.False, "Should not have an Injector for BaseClass2");
+            Assert.That(InjectorCache.TryGetInjector(typeof(BaseClass3WithInjectableFields), out _), Is.True);
+            Assert.That(InjectorCache.TryGetInjector(typeof(ChildClass), out _), Is.True);
+
+            void AssertContainsFieldNamed(string fieldName)
+            {
+                var fields = instance.InjectableFields;
+                var fieldNames = fields.Select(f => f.FieldInfo.Name);
+                var hasField = fieldNames.Any(candidateName => candidateName == fieldName);
+                Assert.That(hasField, Is.True, $"Expected to find field '{fieldName}' but none found in [{string.Join(", ", fieldNames)}]");
+            }
+
+            AssertContainsFieldNamed("field1");
+            AssertContainsFieldNamed("field2");
+            AssertContainsFieldNamed("<Property1>k__BackingField");
+        }
+
+        private abstract class BaseClass1WithInjectableFields
+        {
+            [Inject] protected IInterface1 field1;
+        }
+
+        private abstract class BaseClass2WithNoInjectableFields : BaseClass1WithInjectableFields
+        {
+        }
+
+        private abstract class BaseClass3WithInjectableFields : BaseClass2WithNoInjectableFields
+        {
+            [field: Inject] protected IInterface2 Property1 { get; private set; }
+        }
+
+        private class ChildClass : BaseClass3WithInjectableFields
+        {
+            [Inject] protected IInterface3 field2;
+
+            public IInterface1 GetInjected1() => field1;
+            public IInterface2 GetInjected2() => Property1;
+            public IInterface3 GetInjected3() => field2;
+        }
+
+        private interface IInterface1
+        {
+        }
+
+        private class Impl1 : IInterface1
+        {
+        }
+
+        private interface IInterface2
+        {
+        }
+
+        private class Impl2 : IInterface2
+        {
+        }
+
+        private interface IInterface3
+        {
+        }
+
+        private class Impl3 : IInterface3
+        {
         }
         
         private interface IInterface

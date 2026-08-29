@@ -18,7 +18,7 @@ namespace UJect.Injection
         /// <summary>
         /// Get or create an injector for the given type. Stored in a static dictionary for further access.
         /// </summary>
-        /// <param name="t">The type to retrive an <see cref="Injector"/> for</param>
+        /// <param name="t">The type to retrieve an <see cref="Injector"/> for</param>
         public static Injector GetOrCreateInjector(Type t)
         {
             if (!injectorCache.TryGetValue(t, out var existingInjector))
@@ -29,6 +29,14 @@ namespace UJect.Injection
 
             return existingInjector;
         }
+
+        /// <summary>
+        /// Try to get a cached injector for the provided type
+        /// </summary>
+        /// <param name="t">The type to retrieve an <see cref="Injector"/> for</param>
+        /// <param name="injector">The injector, if one is found</param>
+        /// <returns>True if an injector exists for the provided type, false otherwise</returns>
+        internal static bool TryGetInjector(Type t, out Injector injector) => injectorCache.TryGetValue(t, out injector);
 
         /// <summary>
         /// Clear the injector cache.

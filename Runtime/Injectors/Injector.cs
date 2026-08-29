@@ -35,17 +35,39 @@ namespace UJect.Injection
         /// <summary>
         /// All dependencies of the contained type, as determined by fields and constructors
         /// </summary>
-        public IEnumerable<InjectionKey> DependsOn => dependsOn;
+        public IReadOnlyCollection<InjectionKey> DependsOn => dependsOn;
+
+        private static void GetInjectableFieldInfosForDeclaringType(Type t, List<FieldInfo> scratchFieldInfo)
+        {
+            scratchFieldInfo.Clear();
+            foreach (var fi in t.GetFields(INJECTABLE_BINDING_FLAGS))
+            {
+                if (fi.DeclaringType != t) continue;
+                if (!fi.IsDefined(injectAttributeType, true)) continue;
+                scratchFieldInfo.Add(fi);
+            }
+        }
+
+        [ThreadStatic]
+        private static List<FieldInfo>? _scratchFieldInfo;
+
+        private static List<FieldInfo> ScratchFieldInfo
+        {
+            get
+            {
+                if (_scratchFieldInfo == null) _scratchFieldInfo = new();
+                return _scratchFieldInfo;
+            }
+        }
 
         private void FetchFields()
         {
             injectableFields.Clear();
             
             // Grab all fields with proper binding flags and an inject attribute
-            var fields = referencedType.GetFields(INJECTABLE_BINDING_FLAGS)
-                .Where(fi => fi.IsDefined(injectAttributeType, true));
+            GetInjectableFieldInfosForDeclaringType(referencedType, ScratchFieldInfo);
 
-            foreach (var fieldInfo in fields)
+            foreach (var fieldInfo in ScratchFieldInfo)
             {
                 var customId = fieldInfo.GetCustomAttribute<InjectAttribute>(true).CustomId;
                 var fieldInjectionKey = new InjectionKey(fieldInfo.FieldType, customId);
@@ -55,6 +77,33 @@ namespace UJect.Injection
                 
                 // Add the field
                 injectableFields.Add(new InjectableField(fieldInfo, fieldInjectionKey));
+            }
+
+            var baseType = referencedType.BaseType;
+            while (baseType != null && baseType != typeof(System.Object))
+            {
+                // If there's an injector for the base type, use that, it's fastest
+                if (InjectorCache.TryGetInjector(baseType, out var baseTypeInjector))
+                {
+                    injectableFields.AddRange(baseTypeInjector.InjectableFields);
+                    dependsOn.UnionWith(baseTypeInjector.dependsOn);
+                    break;
+                }
+                
+                // Otherwise, see if there's any injectable fields in the base type
+                GetInjectableFieldInfosForDeclaringType(baseType, ScratchFieldInfo);
+                if (ScratchFieldInfo.Count  > 0)
+                {
+                    // If there's any injectable fields, cache an injector for the base type.
+                    // This'll speed up subsequent requests assuming multiple subclasses of one base class
+                    // as they'll hit the cache on the second pass
+                    baseTypeInjector = InjectorCache.GetOrCreateInjector(baseType);
+                    dependsOn.UnionWith(baseTypeInjector.dependsOn);
+                    injectableFields.AddRange(baseTypeInjector.InjectableFields);
+                    break;
+                }
+
+                baseType = baseType.BaseType;
             }
         }
 

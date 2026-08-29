@@ -23,7 +23,7 @@ namespace UJect.Tests
             Assert.AreEqual(impl1, injectable.Field1, "Field1 should contain a reference to Impl1 due to field injection");
             Assert.AreEqual(impl2, injectable.Param1, "Field1 should contain a reference to Impl1 due to constructor injection");
         }
-
+        
         [Test]
         public void TestDisposingInjectedInstance()
         {
